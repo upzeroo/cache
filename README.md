@@ -2,6 +2,83 @@
 
 Cache component
 
+# Example
+
+Lets take alook at this sample file:
+```
+package main
+
+import (
+...
+	"github.com/mlinuxgada/upzeroo/cache/adapters"
+	cService "github.com/upzeroo/cache/service"
+)
+
+type (
+        Something struct{
+            ...
+	        cache    *cService.CacheService
+        }
+)
+
+func main() {
+	logger := logger.Create().WithFields(logrus.Fields{
+        ...
+	})
+
+	err := godotenv.Load()
+	if err != nil {
+		logger.Fatal("Error loading .env file")
+	}
+
+	cacheAdapter, err := adapters.Factory("redis", &adapters.DepContainer{
+		RedisURL: os.Getenv("REDIS_URL"),
+	})
+	if err != nil {
+		logger.Fatal("redis url not defined")
+	}
+	
+    cacheService := cService.NewCacheService(cacheAdapter, logger)
+    ...
+
+    s := Something{
+        cache: cacheService,
+    }
+    
+    s.DoOne
+    ...
+}
+
+func (s *Something) DoOne() error {
+    ...
+
+	res, err := s.cache.Get("some-key-here")
+	if err != nil {
+        return err     
+    }
+    ...
+}
+
+
+func (s *Something) DoOther() error {
+    ...
+
+    err = s.cache.Set(cacheKey, struct {
+        URL    string
+        Status string
+    }{
+        URL:    urlStr,
+        Status: "is valid",
+    }, 20 * time.Second)
+
+    ...
+}
+
+...
+/// same for cacheService.Delete
+
+```
+
 # Test
 
 Run:
