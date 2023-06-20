@@ -1,16 +1,16 @@
 # General
 
-Cache component
+Simple cache component. Atm has only Redis implementation, but implementinbg/dealing with/ others is easy - just satisfy the cache.Adapter interface, instantiate and inject it into the cache service - thats it. 
 
 # Example
 
-Lets take alook at this sample file:
+Lets take alook at this sample/illustrative lines:
 ```
 package main
 
 import (
 ...
-	"github.com/mlinuxgada/upzeroo/cache/adapters"
+	"github.com/upzeroo/cache/adapters"
 	cService "github.com/upzeroo/cache/service"
 )
 
@@ -41,11 +41,13 @@ func main() {
     cacheService := cService.NewCacheService(cacheAdapter, logger)
     ...
 
-    s := Something{
+    s := &Something{
         cache: cacheService,
     }
     
     s.DoOne
+    ...
+    s.DoOther
     ...
 }
 
